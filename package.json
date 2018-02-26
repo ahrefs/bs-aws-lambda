@@ -1,0 +1,36 @@
+{
+  "name": "@ahrefs/bs-aws-lambda",
+  "version": "0.1.1",
+  "description": "bucklescript types for aws-lambda",
+  "main": "src/awsLambda.bs.js",
+  "repository": "https://github.com/ahrefs/bs-aws-lambda.git",
+  "author": "Louis Roché <louis.roche@ahrefs.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ahrefs/bs-aws-lambda/issues"
+  },
+  "homepage": "https://github.com/ahrefs/bs-aws-lambda#readme",
+  "keywords": [
+    "aws",
+    "lambda",
+    "serverless",
+    "bucklescript",
+    "bsb",
+    "reason",
+    "reasonml",
+    "ocaml",
+    "bs-aws-lambda",
+    "bs-platform"
+  ],
+  "scripts": {
+    "build": "bsb -make-world",
+    "watch": "bsb -make-world -w",
+    "clean": "bsb -clean-world"
+  },
+  "peerDependencies": {
+    "bs-platform": "^2.1.0"
+  },
+  "devDependencies": {
+    "bs-platform": "^2.1.0"
+  }
+}

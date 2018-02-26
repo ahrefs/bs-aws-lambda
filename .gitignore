@@ -1,0 +1,9 @@
+lib
+node_modules
+.merlin
+.bsb.lock
+.vscode
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.bs.js
