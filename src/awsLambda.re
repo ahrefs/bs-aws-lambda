@@ -66,7 +66,8 @@ type error = {
  * @param error – an optional parameter that you can use to provide results of the failed Lambda function execution.
  * @param result – an optional parameter that you can use to provide the result of a successful function execution. The result provided must be JSON.stringify compatible.
  */
-type callback('return) = (Js.Null.t(error), Js.Nullable.t('return)) => unit;
+type callback_error = (Js.Null.t(error)) => unit;
+type callback('return) = (Js.Null.t(error), 'return) => unit;
 
 /**
  * AWS Lambda handler function.
@@ -76,6 +77,8 @@ type callback('return) = (Js.Null.t(error), Js.Nullable.t('return)) => unit;
  * @param context – runtime information of the Lambda function that is executing.
  * @param callback – optional callback to return information to the caller, otherwise return value is null.
  */
+type handler_error('event) =
+  ('event, context, callback_error) => Js.Promise.t(unit);
 type handler('event, 'cb) =
   ('event, context, callback('cb)) => Js.Promise.t(unit);
 
@@ -182,7 +185,7 @@ module Sns = {
     "Sns": message
   };
   type event = {. "Records": array(eventRecord)};
-  type nonrec handler = handler(event, unit);
+  type nonrec handler = handler_error(event);
 };
 
 module Dynamodb = {
@@ -222,7 +225,7 @@ module Dynamodb = {
     "userIdentity": Js.Nullable.t(string)
   };
   type streamEvent = {. "Records": array(record)};
-  type streamHandler = handler(streamEvent, unit);
+  type streamHandler = handler_error(streamEvent);
 };
 
 module Scheduled = {
@@ -238,5 +241,5 @@ module Scheduled = {
     "id": string,
     "resources": array(string)
   };
-  type nonrec handler = handler(event, unit);
+  type nonrec handler = handler_error(event);
 };

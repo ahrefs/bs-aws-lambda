@@ -1,6 +1,6 @@
 {
   "name": "@ahrefs/bs-aws-lambda",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "bucklescript types for aws-lambda",
   "main": "src/awsLambda.bs.js",
   "repository": "https://github.com/ahrefs/bs-aws-lambda.git",

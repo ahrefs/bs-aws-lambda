@@ -66,10 +66,9 @@ let echo: AwsLambda.APIGatewayProxy.handler =
           "isBase64Encoded": Js.Nullable.return(event##isBase64Encoded)
         }
       };
-    cb(Js.null, Js.Nullable.return(result));
+    cb(Js.null, result);
     Js.Promise.resolve();
   };
-
 ```
 
 The typescript equivalent of the type annotation is actually more verbose:
