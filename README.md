@@ -32,6 +32,10 @@ parameters this function will receive.
 
 ## Example
 
+A full example is documented
+[https://tech.ahrefs.com/create-aws-lambda-using-reasonml-and-bucklescript-15a0820ff55b](here). It
+is using the sources from the [`example`](example) directory.
+
 Simple echo function for the API Gateway. This might seem a little
 verbose compare to a typescript version. But using this package, you
 are sure to handle all the possible cases where a value is actually
