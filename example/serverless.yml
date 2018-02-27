@@ -1,0 +1,24 @@
+service:
+  name: example
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+
+custom:
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  region: eu-west-3
+  stage: dev
+
+functions:
+  echo:
+    memorySize: 256
+    timeout: 29
+    handler: echo.handler
+    events:
+      - http:
+          method: post
+          path: /echo
