@@ -33,7 +33,7 @@ parameters this function will receive.
 ## Example
 
 A full example is documented
-[here](https://tech.ahrefs.com/create-aws-lambda-using-reasonml-and-bucklescript-15a0820ff55b]). It
+[here](https://tech.ahrefs.com/create-aws-lambda-using-reasonml-and-bucklescript-15a0820ff55b). It
 is using the sources from the [`example`](example) directory.
 
 Simple echo function for the API Gateway. This might seem a little
