@@ -9,7 +9,7 @@ type any;
 type cognitoIdentity = {
   .
   "cognitoIdentityId": string,
-  "cognitoIdentityPoolId": string
+  "cognitoIdentityPoolId": string,
 };
 
 type clientContextClient = {
@@ -18,7 +18,7 @@ type clientContextClient = {
   "appTitle": string,
   "appVersionName": string,
   "appVersionCode": string,
-  "appPackageName": string
+  "appPackageName": string,
 };
 
 type clientContextEnv = {
@@ -27,14 +27,14 @@ type clientContextEnv = {
   "platform": string,
   "make": string,
   "model": string,
-  "locale": string
+  "locale": string,
 };
 
 type clientContext = {
   .
   "client": clientContextClient,
   "Custom": Js.Nullable.t(any),
-  "env": clientContextEnv
+  "env": clientContextEnv,
 };
 
 type context = {
@@ -49,14 +49,14 @@ type context = {
   "logStreamName": string,
   "identity": Js.Nullable.t(cognitoIdentity),
   "clientContext": Js.Nullable.t(clientContext),
-  "getRemainingTimeInMillis": unit => int
+  "getRemainingTimeInMillis": unit => int,
 };
 
 type error = {
   .
   "name": string,
   "message": string,
-  "stack": Js.Nullable.t(string)
+  "stack": Js.Nullable.t(string),
 };
 
 /**
@@ -66,7 +66,8 @@ type error = {
  * @param error – an optional parameter that you can use to provide results of the failed Lambda function execution.
  * @param result – an optional parameter that you can use to provide the result of a successful function execution. The result provided must be JSON.stringify compatible.
  */
-type callback_error = (Js.Null.t(error)) => unit;
+type callback_error = Js.Null.t(error) => unit;
+
 type callback('return) = (Js.Null.t(error), 'return) => unit;
 
 /**
@@ -79,6 +80,7 @@ type callback('return) = (Js.Null.t(error), 'return) => unit;
  */
 type handler_error('event) =
   ('event, context, callback_error) => Js.Promise.t(unit);
+
 type handler('event, 'cb) =
   ('event, context, callback('cb)) => Js.Promise.t(unit);
 
@@ -102,7 +104,7 @@ module APIGatewayProxy = {
     "sourceIp": Js.Null.t(string),
     "user": Js.Null.t(string),
     "userAgent": Js.Null.t(string),
-    "userArn": Js.Null.t(string)
+    "userArn": Js.Null.t(string),
   };
   type eventRequestContext = {
     .
@@ -115,7 +117,7 @@ module APIGatewayProxy = {
     "requestTimeEpoch": int,
     "resourceId": string,
     "resourcePath": string,
-    "identity": identity
+    "identity": identity,
   };
   /** [header: string]: boolean | number | string */
   type headers = Js.Dict.t(any);
@@ -124,20 +126,20 @@ module APIGatewayProxy = {
     "statusCode": int,
     "headers": Js.Nullable.t(headers),
     "body": string,
-    "isBase64Encoded": Js.Nullable.t(Js.boolean)
+    "isBase64Encoded": Js.Nullable.t(Js.boolean),
   };
   let result = (~headers=?, ~body, ~statusCode, ()) : result => {
     let (body, isBase64Encoded) =
-      switch body {
+      switch (body) {
       | `Plain(body) => (body, Js.false_)
       | `Base64(body) => (body, Js.true_)
       };
-    let headers = Js.Nullable.from_opt(headers);
+    let headers = Js.Nullable.fromOption(headers);
     {
       "body": body,
       "statusCode": statusCode,
       "headers": headers,
-      "isBase64Encoded": Js.Nullable.return(isBase64Encoded)
+      "isBase64Encoded": Js.Nullable.return(isBase64Encoded),
     };
   };
   type event = {
@@ -151,7 +153,7 @@ module APIGatewayProxy = {
     "queryStringParameters": Js.Null.t(Js.Dict.t(string)),
     "stageVariables": Js.Null.t(Js.Dict.t(string)),
     "requestContext": eventRequestContext,
-    "resource": string
+    "resource": string,
   };
   type nonrec handler = handler(event, result);
 };
@@ -160,7 +162,7 @@ module Sns = {
   type messageAttribute = {
     .
     "Type": string,
-    "Value": string
+    "Value": string,
   };
   type messageAttributes = Js.Dict.t(messageAttribute);
   type message = {
@@ -175,14 +177,14 @@ module Sns = {
     "Type": string,
     "UnsubscribeUrl": string,
     "TopicArn": string,
-    "Subject": string
+    "Subject": string,
   };
   type eventRecord = {
     .
     "EventVersion": string,
     "EventSubscriptionArn": string,
     "EventSource": string,
-    "Sns": message
+    "Sns": message,
   };
   type event = {. "Records": array(eventRecord)};
   type nonrec handler = handler_error(event);
@@ -200,7 +202,7 @@ module Dynamodb = {
     "NS": Js.Nullable.t(array(string)),
     "NULL": Js.Nullable.t(Js.boolean),
     "S": Js.Nullable.t(string),
-    "SS": Js.Nullable.t(array(string))
+    "SS": Js.Nullable.t(array(string)),
   };
   type streamRecord = {
     .
@@ -210,8 +212,7 @@ module Dynamodb = {
     "OldImage": Js.Nullable.t(Js.Dict.t(attributeValue)),
     "SequenceNumber": Js.Nullable.t(string),
     "SizeBytes": Js.Nullable.t(int),
-    "StreamViewType":
-      Js.Nullable.t(string) /* 'KEYS_ONLY' | 'NEW_IMAGE' | 'OLD_IMAGE' | 'NEW_AND_OLD_IMAGES' */
+    "StreamViewType": Js.Nullable.t(string) /* 'KEYS_ONLY' | 'NEW_IMAGE' | 'OLD_IMAGE' | 'NEW_AND_OLD_IMAGES' */
   };
   type record = {
     .
@@ -222,7 +223,7 @@ module Dynamodb = {
     "eventSource": Js.Nullable.t(string),
     "eventSourceARN": Js.Nullable.t(string),
     "eventVersion": Js.Nullable.t(string),
-    "userIdentity": Js.Nullable.t(string)
+    "userIdentity": Js.Nullable.t(string),
   };
   type streamEvent = {. "Records": array(record)};
   type streamHandler = handler_error(streamEvent);
@@ -239,7 +240,7 @@ module Scheduled = {
     "source": string,
     "time": string,
     "id": string,
-    "resources": array(string)
+    "resources": array(string),
   };
   type nonrec handler = handler_error(event);
 };
