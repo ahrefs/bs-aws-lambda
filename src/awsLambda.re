@@ -91,6 +91,34 @@ type handler('event, 'cb) =
 type authResponseContext = Js.Dict.t(any);
 
 module APIGatewayProxy = {
+  module Authorizer = {
+    type event = {
+      .
+      "type": string,
+      "methodArn": string,
+      "authorizationToken": string,
+    };
+    type statement = {
+      .
+      "Action": array(string),
+      "Effect": string,
+      "Resource": array(string),
+      "Sid": string,
+    };
+    type policyDocument = {
+      .
+      "Statement": array(statement),
+      "Version": string,
+    };
+    type result = {
+      .
+      "policyDocument": policyDocument,
+      "principalId": string,
+    };
+    type handler =
+      (event, context, (Js.Null.t(string), Js.Null.t(result)) => unit) =>
+      Js.Promise.t(unit);
+  };
   type identity = {
     .
     "accessKey": Js.Null.t(string),
