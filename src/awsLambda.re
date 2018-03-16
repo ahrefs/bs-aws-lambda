@@ -39,7 +39,7 @@ type clientContext = {
 
 type context = {
   .
-  "callbackWaitsForEmptyEventLoop": Js.boolean,
+  [@bs.set] "callbackWaitsForEmptyEventLoop": Js.boolean,
   "functionName": string,
   "functionVersion": string,
   "invokedFunctionArn": string,
