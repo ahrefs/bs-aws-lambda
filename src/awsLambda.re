@@ -115,9 +115,7 @@ module APIGatewayProxy = {
       "policyDocument": policyDocument,
       "principalId": string,
     };
-    type handler =
-      (event, context, (Js.Null.t(string), Js.Null.t(result)) => unit) =>
-      Js.Promise.t(unit);
+    type nonrec handler = handler(event, result);
   };
   type identity = {
     .
