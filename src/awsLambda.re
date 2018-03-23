@@ -70,7 +70,7 @@ type error = {
  */
 type callback_error = Js.Null.t(error) => unit;
 
-type callback('return) = (Js.Null.t(error), 'return) => unit;
+type callback('error, 'return) = (Js.Null.t('error), 'return) => unit;
 
 /**
  * AWS Lambda handler function.
@@ -83,8 +83,10 @@ type callback('return) = (Js.Null.t(error), 'return) => unit;
 type handler_error('event) =
   ('event, context, callback_error) => Js.Promise.t(unit);
 
-type handler('event, 'cb) =
-  ('event, context, callback('cb)) => Js.Promise.t(unit);
+type handler('event, 'error, 'return) =
+  ('event, context, callback('error, 'return)) => Js.Promise.t(unit);
+
+type handler_default('event, 'return) = handler('event, error, 'return);
 
 /**
  * API Gateway CustomAuthorizer AuthResponse.PolicyDocument.Statement.
@@ -157,7 +159,7 @@ module APIGatewayProxy = {
     "requestContext": eventRequestContext,
     "resource": string,
   };
-  type nonrec handler = handler(event, result);
+  type handler = handler_default(event, result);
 };
 
 module APIGatewayAuthorizer = {
@@ -188,7 +190,7 @@ module APIGatewayAuthorizer = {
     "principalId": string,
     "context": Js.Nullable.t(authResponseContext),
   };
-  type nonrec handler = handler(event, Js.Nullable.t(result));
+  type nonrec handler = handler(event, string, Js.Nullable.t(result));
 };
 
 module Sns = {
@@ -220,7 +222,7 @@ module Sns = {
     "Sns": message,
   };
   type event = {. "Records": array(eventRecord)};
-  type nonrec handler = handler_error(event);
+  type handler = handler_error(event);
 };
 
 module Dynamodb = {
@@ -275,5 +277,5 @@ module Scheduled = {
     "id": string,
     "resources": array(string),
   };
-  type nonrec handler = handler_error(event);
+  type handler = handler_error(event);
 };
