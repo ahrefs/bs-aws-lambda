@@ -5,6 +5,7 @@
  */
 /** This is the responsability of the user to cast this any to the good type. */
 type any;
+
 external any : 'a => any = "%identity";
 
 type cognitoIdentity = {
@@ -181,7 +182,6 @@ module APIGatewayAuthorizer = {
     "Statement": array(statement),
     "Version": string,
   };
-  type authResponseContext = Js.Dict.t(any);
   type result = {
     .
     "policyDocument": policyDocument,
