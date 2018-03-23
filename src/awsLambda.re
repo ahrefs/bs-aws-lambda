@@ -5,6 +5,7 @@
  */
 /** This is the responsability of the user to cast this any to the good type. */
 type any;
+external any : 'a => any = "%identity";
 
 type cognitoIdentity = {
   .
@@ -91,32 +92,6 @@ type handler('event, 'cb) =
 type authResponseContext = Js.Dict.t(any);
 
 module APIGatewayProxy = {
-  module Authorizer = {
-    type event = {
-      .
-      "type": string,
-      "methodArn": string,
-      "authorizationToken": string,
-    };
-    type statement = {
-      .
-      "Action": array(string),
-      "Effect": string,
-      "Resource": array(string),
-      "Sid": string,
-    };
-    type policyDocument = {
-      .
-      "Statement": array(statement),
-      "Version": string,
-    };
-    type result = {
-      .
-      "policyDocument": policyDocument,
-      "principalId": string,
-    };
-    type nonrec handler = handler(event, result);
-  };
   type identity = {
     .
     "accessKey": Js.Null.t(string),
@@ -182,6 +157,38 @@ module APIGatewayProxy = {
     "resource": string,
   };
   type nonrec handler = handler(event, result);
+};
+
+module APIGatewayAuthorizer = {
+  type event = {
+    .
+    "type": string,
+    "methodArn": string,
+    "authorizationToken": Js.Nullable.t(string),
+    "headers": Js.Nullable.t(Js.Dict.t(string)),
+    "pathParameters": Js.Nullable.t(Js.Dict.t(string)),
+    "queryStringParameters": Js.Nullable.t(Js.Dict.t(string)),
+    "requestContext": Js.Nullable.t(APIGatewayProxy.eventRequestContext),
+  };
+  type statement = {
+    .
+    "Action": array(string),
+    "Effect": string,
+    "Resource": array(string),
+  };
+  type policyDocument = {
+    .
+    "Statement": array(statement),
+    "Version": string,
+  };
+  type authResponseContext = Js.Dict.t(any);
+  type result = {
+    .
+    "policyDocument": policyDocument,
+    "principalId": string,
+    "context": Js.Nullable.t(authResponseContext),
+  };
+  type nonrec handler = handler(event, Js.Nullable.t(result));
 };
 
 module Sns = {

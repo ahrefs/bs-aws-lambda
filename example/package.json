@@ -4,8 +4,8 @@
   "main": "echo.bs.js",
   "license": "MIT",
   "dependencies": {
-    "@ahrefs/bs-aws-lambda": "^0.2.0",
-    "bs-platform": "^2.2.1"
+    "@ahrefs/bs-aws-lambda": "file:../",
+    "bs-platform": "^2.2.2"
   },
   "devDependencies": {
     "serverless-offline": "^3.18.0",

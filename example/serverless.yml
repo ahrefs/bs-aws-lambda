@@ -22,3 +22,11 @@ functions:
       - http:
           method: post
           path: /echo
+          authorizer:
+            name: auth
+            resultTtlInSeconds: 0
+            type: request
+            identitySource: method.request.querystring.token
+            identityValidationExpression: "[a-zA-Z0-9._-]+"
+  auth:
+    handler: auth.handle

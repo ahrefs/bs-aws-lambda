@@ -2,9 +2,8 @@
 # yarn lockfile v1
 
 
-"@ahrefs/bs-aws-lambda@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@ahrefs/bs-aws-lambda/-/bs-aws-lambda-0.2.0.tgz#9ef7f36ca83e2361519762566f607d517bebfb26"
+"@ahrefs/bs-aws-lambda@file:..":
+  version "0.4.0"
 
 abbrev@1:
   version "1.1.1"
@@ -483,9 +482,9 @@ browserify-zlib@^0.2.0:
   dependencies:
     pako "~1.0.5"
 
-bs-platform@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-2.2.1.tgz#e22b82143a43a10630d7b2040aab87648b12190c"
+bs-platform@^2.2.2:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-2.2.3.tgz#d905ae10a5f3621e6a739041dfa0b58483a2174f"
 
 buffer-crc32@^0.2.1:
   version "0.2.13"
