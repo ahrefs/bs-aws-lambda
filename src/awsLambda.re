@@ -51,7 +51,7 @@ type context = {
   "logStreamName": string,
   "identity": Js.Nullable.t(cognitoIdentity),
   "clientContext": Js.Nullable.t(clientContext),
-  "getRemainingTimeInMillis": unit => int,
+  [@bs.meth] "getRemainingTimeInMillis": unit => int,
 };
 
 type error = {
