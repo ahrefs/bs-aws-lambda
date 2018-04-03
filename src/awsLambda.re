@@ -175,14 +175,14 @@ module APIGatewayAuthorizer = {
   };
   type statement = {
     .
-    "Action": array(string),
-    "Effect": string,
-    "Resource": array(string),
+    "_Action": array(string),
+    "_Effect": string,
+    "_Resource": array(string),
   };
   type policyDocument = {
     .
-    "Statement": array(statement),
-    "Version": string,
+    "_Statement": array(statement),
+    "_Version": string,
   };
   type result = {
     .
@@ -196,30 +196,30 @@ module APIGatewayAuthorizer = {
 module Sns = {
   type messageAttribute = {
     .
-    "Type": string,
-    "Value": string,
+    "_Type": string,
+    "_Value": string,
   };
   type messageAttributes = Js.Dict.t(messageAttribute);
   type message = {
     .
-    "SignatureVersion": string,
-    "Timestamp": string,
-    "Signature": string,
-    "SigningCertUrl": string,
-    "MessageId": string,
-    "Message": string,
-    "MessageAttributes": messageAttributes,
-    "Type": string,
-    "UnsubscribeUrl": string,
-    "TopicArn": string,
-    "Subject": string,
+    "_SignatureVersion": string,
+    "_Timestamp": string,
+    "_Signature": string,
+    "_SigningCertUrl": string,
+    "_MessageId": string,
+    "_Message": string,
+    "_MessageAttributes": messageAttributes,
+    "_Type": string,
+    "_UnsubscribeUrl": string,
+    "_TopicArn": string,
+    "_Subject": string,
   };
   type eventRecord = {
     .
-    "EventVersion": string,
-    "EventSubscriptionArn": string,
-    "EventSource": string,
-    "Sns": message,
+    "_EventVersion": string,
+    "_EventSubscriptionArn": string,
+    "_EventSource": string,
+    "_Sns": message,
   };
   type event = {. "Records": array(eventRecord)};
   type handler = handler_error(event);
@@ -228,26 +228,26 @@ module Sns = {
 module Dynamodb = {
   type attributeValue = {
     .
-    "B": Js.Nullable.t(string),
-    "BS": Js.Nullable.t(array(string)),
-    "BOOL": Js.Nullable.t(Js.boolean),
-    "L": Js.Nullable.t(array(attributeValue)),
-    "M": Js.Nullable.t(Js.Dict.t(attributeValue)),
-    "N": Js.Nullable.t(string),
-    "NS": Js.Nullable.t(array(string)),
-    "NULL": Js.Nullable.t(Js.boolean),
-    "S": Js.Nullable.t(string),
-    "SS": Js.Nullable.t(array(string)),
+    "_B": Js.Nullable.t(string),
+    "_BS": Js.Nullable.t(array(string)),
+    "_BOOL": Js.Nullable.t(Js.boolean),
+    "_L": Js.Nullable.t(array(attributeValue)),
+    "_M": Js.Nullable.t(Js.Dict.t(attributeValue)),
+    "_N": Js.Nullable.t(string),
+    "_NS": Js.Nullable.t(array(string)),
+    "_NULL": Js.Nullable.t(Js.boolean),
+    "_S": Js.Nullable.t(string),
+    "_SS": Js.Nullable.t(array(string)),
   };
   type streamRecord = {
     .
-    "ApproximateCreationTime": Js.Nullable.t(int),
-    "Keys": Js.Nullable.t(Js.Dict.t(attributeValue)),
-    "NewImage": Js.Nullable.t(Js.Dict.t(attributeValue)),
-    "OldImage": Js.Nullable.t(Js.Dict.t(attributeValue)),
-    "SequenceNumber": Js.Nullable.t(string),
-    "SizeBytes": Js.Nullable.t(int),
-    "StreamViewType": Js.Nullable.t(string) /* 'KEYS_ONLY' | 'NEW_IMAGE' | 'OLD_IMAGE' | 'NEW_AND_OLD_IMAGES' */
+    "_ApproximateCreationTime": Js.Nullable.t(int),
+    "_Keys": Js.Nullable.t(Js.Dict.t(attributeValue)),
+    "_NewImage": Js.Nullable.t(Js.Dict.t(attributeValue)),
+    "_OldImage": Js.Nullable.t(Js.Dict.t(attributeValue)),
+    "_SequenceNumber": Js.Nullable.t(string),
+    "_SizeBytes": Js.Nullable.t(int),
+    "_StreamViewType": Js.Nullable.t(string) /* 'KEYS_ONLY' | 'NEW_IMAGE' | 'OLD_IMAGE' | 'NEW_AND_OLD_IMAGES' */
   };
   type record = {
     .
@@ -260,7 +260,7 @@ module Dynamodb = {
     "eventVersion": Js.Nullable.t(string),
     "userIdentity": Js.Nullable.t(string),
   };
-  type streamEvent = {. "Records": array(record)};
+  type streamEvent = {. "_Records": array(record)};
   type streamHandler = handler_error(streamEvent);
 };
 
