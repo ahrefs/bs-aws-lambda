@@ -221,7 +221,7 @@ module Sns = {
     "_EventSource": string,
     "_Sns": message,
   };
-  type event = {. "Records": array(eventRecord)};
+  type event = {. "_Records": array(eventRecord)};
   type handler = handler_error(event);
 };
 
