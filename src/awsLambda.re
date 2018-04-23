@@ -41,7 +41,7 @@ type clientContext = {
 
 type context = {
   .
-  [@bs.set] "callbackWaitsForEmptyEventLoop": Js.boolean,
+  [@bs.set] "callbackWaitsForEmptyEventLoop": bool,
   "functionName": string,
   "functionVersion": string,
   "invokedFunctionArn": string,
@@ -130,13 +130,13 @@ module APIGatewayProxy = {
     "statusCode": int,
     "headers": Js.Nullable.t(headers),
     "body": string,
-    "isBase64Encoded": Js.Nullable.t(Js.boolean),
+    "isBase64Encoded": Js.Nullable.t(bool),
   };
   let result = (~headers=?, ~body, ~statusCode, ()) : result => {
     let (body, isBase64Encoded) =
       switch (body) {
-      | `Plain(body) => (body, Js.false_)
-      | `Base64(body) => (body, Js.true_)
+      | `Plain(body) => (body, false)
+      | `Base64(body) => (body, true)
       };
     let headers = Js.Nullable.fromOption(headers);
     {
@@ -151,7 +151,7 @@ module APIGatewayProxy = {
     "body": Js.Null.t(string),
     "headers": Js.Dict.t(string),
     "httpMethod": string,
-    "isBase64Encoded": Js.boolean,
+    "isBase64Encoded": bool,
     "path": string,
     "pathParameters": Js.Null.t(Js.Dict.t(string)),
     "queryStringParameters": Js.Null.t(Js.Dict.t(string)),
@@ -230,12 +230,12 @@ module Dynamodb = {
     .
     "_B": Js.Nullable.t(string),
     "_BS": Js.Nullable.t(array(string)),
-    "_BOOL": Js.Nullable.t(Js.boolean),
+    "_BOOL": Js.Nullable.t(bool),
     "_L": Js.Nullable.t(array(attributeValue)),
     "_M": Js.Nullable.t(Js.Dict.t(attributeValue)),
     "_N": Js.Nullable.t(string),
     "_NS": Js.Nullable.t(array(string)),
-    "_NULL": Js.Nullable.t(Js.boolean),
+    "_NULL": Js.Nullable.t(bool),
     "_S": Js.Nullable.t(string),
     "_SS": Js.Nullable.t(array(string)),
   };

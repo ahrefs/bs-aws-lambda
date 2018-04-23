@@ -28,9 +28,9 @@
     "clean": "bsb -clean-world"
   },
   "peerDependencies": {
-    "bs-platform": "^2.2.2"
+    "bs-platform": "^3.0.0"
   },
   "devDependencies": {
-    "bs-platform": "2.2.2"
+    "bs-platform": "^3.0.0"
   }
 }
