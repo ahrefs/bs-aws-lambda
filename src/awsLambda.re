@@ -54,12 +54,7 @@ type context = {
   [@bs.meth] "getRemainingTimeInMillis": unit => int,
 };
 
-type error = {
-  .
-  "name": string,
-  "message": string,
-  "stack": Js.Nullable.t(string),
-};
+type error = Js.Nullable.t(Js.Exn.t);
 
 /**
  * Optional callback parameter.
@@ -68,7 +63,7 @@ type error = {
  * @param error – an optional parameter that you can use to provide results of the failed Lambda function execution.
  * @param result – an optional parameter that you can use to provide the result of a successful function execution. The result provided must be JSON.stringify compatible.
  */
-type callback_error = Js.Null.t(error) => unit;
+type callback_error = error => unit;
 
 type callback('error, 'return) = (Js.Null.t('error), 'return) => unit;
 
