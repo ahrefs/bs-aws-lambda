@@ -8,51 +8,70 @@ type any;
 
 external any : 'a => any = "%identity";
 
-type cognitoIdentity = {
-  .
-  "cognitoIdentityId": string,
-  "cognitoIdentityPoolId": string,
+module CognitoIdentity = {
+  [@bs.deriving abstract]
+  type t = {
+    cognitoIdentityId: string,
+    cognitoIdentityPoolId: string,
+  };
+  let make = t;
 };
 
-type clientContextClient = {
-  .
-  "installationId": string,
-  "appTitle": string,
-  "appVersionName": string,
-  "appVersionCode": string,
-  "appPackageName": string,
+module ClientContextClient = {
+  [@bs.deriving abstract]
+  type t = {
+    installationId: string,
+    appTitle: string,
+    appVersionName: string,
+    appVersionCode: string,
+    appPackageName: string,
+  };
+  let make = t;
 };
 
-type clientContextEnv = {
-  .
-  "platformVersion": string,
-  "platform": string,
-  "make": string,
-  "model": string,
-  "locale": string,
+module ClientContextEnv = {
+  [@bs.deriving abstract]
+  type t = {
+    platformVersion: string,
+    platform: string,
+    make: string,
+    model: string,
+    locale: string,
+  };
+  let make = t;
 };
 
-type clientContext = {
-  .
-  "client": clientContextClient,
-  "Custom": Js.Nullable.t(any),
-  "env": clientContextEnv,
+module ClientContext = {
+  [@bs.deriving abstract]
+  type t = {
+    client: ClientContextClient.t,
+    [@bs.optional] [@bs.as "Custom"]
+    custom: any,
+    env: ClientContextEnv.t,
+  };
+  let make = t;
 };
 
-type context = {
-  .
-  [@bs.set] "callbackWaitsForEmptyEventLoop": bool,
-  "functionName": string,
-  "functionVersion": string,
-  "invokedFunctionArn": string,
-  "memoryLimitInMB": int,
-  "awsRequestId": string,
-  "logGroupName": string,
-  "logStreamName": string,
-  "identity": Js.Nullable.t(cognitoIdentity),
-  "clientContext": Js.Nullable.t(clientContext),
-  [@bs.meth] "getRemainingTimeInMillis": unit => int,
+module Context = {
+  [@bs.deriving abstract]
+  type t = {
+    mutable callbackWaitsForEmptyEventLoop: bool,
+    functionName: string,
+    functionVersion: string,
+    invokedFunctionArn: string,
+    memoryLimitInMB: int,
+    awsRequestId: string,
+    logGroupName: string,
+    logStreamName: string,
+    [@bs.optional]
+    identity: CognitoIdentity.t,
+    [@bs.optional]
+    clientContext: ClientContext.t,
+  };
+  let make = t;
 };
+
+[@bs.send] external getRemainingTimeInMillis : Context.t => int = "";
 
 type error = Js.Nullable.t(Js.Exn.t);
 
@@ -76,10 +95,10 @@ type callback('error, 'return) = (Js.Null.t('error), 'return) => unit;
  * @param callback – optional callback to return information to the caller, otherwise return value is null.
  */
 type handler_error('event) =
-  ('event, context, callback_error) => Js.Promise.t(unit);
+  ('event, Context.t, callback_error) => Js.Promise.t(unit);
 
 type handler('event, 'error, 'return) =
-  ('event, context, callback('error, 'return)) => Js.Promise.t(unit);
+  ('event, Context.t, callback('error, 'return)) => Js.Promise.t(unit);
 
 type handler_default('event, 'return) = handler('event, error, 'return);
 
@@ -90,187 +109,333 @@ type handler_default('event, 'return) = handler('event, error, 'return);
 type authResponseContext = Js.Dict.t(any);
 
 module APIGatewayProxy = {
-  type identity = {
-    .
-    "accessKey": Js.Null.t(string),
-    "accountId": Js.Null.t(string),
-    "apiKey": Js.Null.t(string),
-    "caller": Js.Null.t(string),
-    "cognitoAuthenticationProvider": Js.Null.t(string),
-    "cognitoAuthenticationType": Js.Null.t(string),
-    "cognitoIdentityId": Js.Null.t(string),
-    "cognitoIdentityPoolId": Js.Null.t(string),
-    "sourceIp": Js.Null.t(string),
-    "user": Js.Null.t(string),
-    "userAgent": Js.Null.t(string),
-    "userArn": Js.Null.t(string),
+  module Identity = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.optional]
+      accessKey: string,
+      [@bs.optional]
+      accountId: string,
+      [@bs.optional]
+      apiKey: string,
+      [@bs.optional]
+      caller: string,
+      [@bs.optional]
+      cognitoAuthenticationProvider: string,
+      [@bs.optional]
+      cognitoAuthenticationType: string,
+      [@bs.optional]
+      cognitoIdentityId: string,
+      [@bs.optional]
+      cognitoIdentityPoolId: string,
+      [@bs.optional]
+      sourceIp: string,
+      [@bs.optional]
+      user: string,
+      [@bs.optional]
+      userAgent: string,
+      [@bs.optional]
+      userArn: string,
+    };
+
+    let make = t;
   };
-  type eventRequestContext = {
-    .
-    "accountId": string,
-    "apiId": string,
-    "authorizer": Js.Nullable.t(authResponseContext),
-    "httpMethod": string,
-    "stage": string,
-    "requestId": string,
-    "requestTimeEpoch": int,
-    "resourceId": string,
-    "resourcePath": string,
-    "identity": identity,
+
+  module EventRequestContext = {
+    [@bs.deriving abstract]
+    type t = {
+      accountId: string,
+      apiId: string,
+      [@bs.optional]
+      authorizer: authResponseContext,
+      httpMethod: string,
+      stage: string,
+      requestId: string,
+      requestTimeEpoch: int,
+      resourceId: string,
+      resourcePath: string,
+      identity: Identity.t,
+    };
+
+    let make = t;
   };
   /** [header: string]: boolean | number | string */
   type headers = Js.Dict.t(any);
-  type result = {
-    .
-    "statusCode": int,
-    "headers": Js.Nullable.t(headers),
-    "body": string,
-    "isBase64Encoded": Js.Nullable.t(bool),
+
+  module Result = {
+    [@bs.deriving abstract]
+    type t = {
+      statusCode: int,
+      [@bs.optional]
+      headers,
+      body: string,
+      [@bs.optional]
+      isBase64Encoded: bool,
+    };
+    let make = t;
   };
-  let result = (~headers=?, ~body, ~statusCode, ()) : result => {
+
+  let result = (~headers=?, ~body, ~statusCode, ()) : Result.t => {
     let (body, isBase64Encoded) =
       switch (body) {
       | `Plain(body) => (body, false)
       | `Base64(body) => (body, true)
       };
-    let headers = Js.Nullable.fromOption(headers);
-    {
-      "body": body,
-      "statusCode": statusCode,
-      "headers": headers,
-      "isBase64Encoded": Js.Nullable.return(isBase64Encoded),
+
+    Result.make(~body, ~statusCode, ~headers?, ~isBase64Encoded, ());
+  };
+
+  module Event = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.optional]
+      body: string,
+      headers: Js.Dict.t(string),
+      httpMethod: string,
+      isBase64Encoded: bool,
+      path: string,
+      [@bs.optional]
+      pathParameters: Js.Dict.t(string),
+      [@bs.optional]
+      queryStringParameters: Js.Dict.t(string),
+      [@bs.optional]
+      stageVariables: Js.Dict.t(string),
+      requestContext: EventRequestContext.t,
+      resource: string,
     };
+    let make = t;
   };
-  type event = {
-    .
-    "body": Js.Null.t(string),
-    "headers": Js.Dict.t(string),
-    "httpMethod": string,
-    "isBase64Encoded": bool,
-    "path": string,
-    "pathParameters": Js.Null.t(Js.Dict.t(string)),
-    "queryStringParameters": Js.Null.t(Js.Dict.t(string)),
-    "stageVariables": Js.Null.t(Js.Dict.t(string)),
-    "requestContext": eventRequestContext,
-    "resource": string,
-  };
-  type handler = handler_default(event, result);
+  type handler = handler_default(Event.t, Result.t);
 };
 
 module APIGatewayAuthorizer = {
-  type event = {
-    .
-    "type": string,
-    "methodArn": string,
-    "authorizationToken": Js.Nullable.t(string),
-    "headers": Js.Nullable.t(Js.Dict.t(string)),
-    "pathParameters": Js.Nullable.t(Js.Dict.t(string)),
-    "queryStringParameters": Js.Nullable.t(Js.Dict.t(string)),
-    "requestContext": Js.Nullable.t(APIGatewayProxy.eventRequestContext),
+  module Event = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.as "type"]
+      type_: string,
+      methodArn: string,
+      [@bs.optional]
+      authorizationToken: string,
+      [@bs.optional]
+      headers: Js.Dict.t(string),
+      [@bs.optional]
+      pathParameters: Js.Dict.t(string),
+      [@bs.optional]
+      queryStringParameters: Js.Dict.t(string),
+      [@bs.optional]
+      requestContext: APIGatewayProxy.EventRequestContext.t,
+    };
+    let make = t;
   };
-  type statement = {
-    .
-    "_Action": array(string),
-    "_Effect": string,
-    "_Resource": array(string),
+
+  module Statement = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.as "Action"]
+      action: array(string),
+      [@bs.as "Effect"]
+      effect: string,
+      [@bs.as "Resource"]
+      resource: array(string),
+    };
+    let make = t;
   };
-  type policyDocument = {
-    .
-    "_Statement": array(statement),
-    "_Version": string,
+
+  module PolicyDocument = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.as "Statement"]
+      statement: array(Statement.t),
+      [@bs.as "Version"]
+      version: string,
+    };
+    let make = t;
   };
-  type result = {
-    .
-    "policyDocument": policyDocument,
-    "principalId": string,
-    "context": Js.Nullable.t(authResponseContext),
+
+  module Result = {
+    [@bs.deriving abstract]
+    type t = {
+      policyDocument: PolicyDocument.t,
+      principalId: string,
+      [@bs.optional]
+      context: authResponseContext,
+    };
+    let make = t;
   };
-  type nonrec handler = handler(event, string, Js.Nullable.t(result));
+  type nonrec handler = handler(Event.t, string, Js.Nullable.t(Result.t));
 };
 
 module Sns = {
-  type messageAttribute = {
-    .
-    "_Type": string,
-    "_Value": string,
+  module MessageAttribute = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.as "Type"]
+      type_: string,
+      [@bs.as "Value"]
+      value: string,
+    };
+    let make = t;
   };
-  type messageAttributes = Js.Dict.t(messageAttribute);
-  type message = {
-    .
-    "_SignatureVersion": string,
-    "_Timestamp": string,
-    "_Signature": string,
-    "_SigningCertUrl": string,
-    "_MessageId": string,
-    "_Message": string,
-    "_MessageAttributes": messageAttributes,
-    "_Type": string,
-    "_UnsubscribeUrl": string,
-    "_TopicArn": string,
-    "_Subject": string,
+
+  type messageAttributes = Js.Dict.t(MessageAttribute.t);
+
+  module Message = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.as "SignatureVersion"]
+      signatureVersion: string,
+      [@bs.as "Timestamp"]
+      timestamp: string,
+      [@bs.as "Signature"]
+      signature: string,
+      [@bs.as "SigningCertUrl"]
+      signingCertUrl: string,
+      [@bs.as "MessageId"]
+      messageId: string,
+      [@bs.as "Message"]
+      message: string,
+      [@bs.as "MessageAttributes"]
+      messageAttributes,
+      [@bs.as "Type"]
+      type_: string,
+      [@bs.as "UnsubscribeUrl"]
+      unsubscribeUrl: string,
+      [@bs.as "TopicArn"]
+      topicArn: string,
+      [@bs.as "Subject"]
+      subject: string,
+    };
+    let make = t;
   };
-  type eventRecord = {
-    .
-    "_EventVersion": string,
-    "_EventSubscriptionArn": string,
-    "_EventSource": string,
-    "_Sns": message,
+
+  module EventRecord = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.as "EventVersion"]
+      eventVersion: string,
+      [@bs.as "EventSubscriptionArn"]
+      eventSubscriptionArn: string,
+      [@bs.as "EventSource"]
+      eventSource: string,
+      [@bs.as "Sns"]
+      sns: Message.t,
+    };
+    let make = t;
   };
-  type event = {. "_Records": array(eventRecord)};
-  type handler = handler_error(event);
+
+  module Event = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.as "Records"]
+      records: array(EventRecord.t),
+    };
+    let make = t;
+  };
+
+  type handler = handler_error(Event.t);
 };
 
 module Dynamodb = {
-  type attributeValue = {
-    .
-    "_B": Js.Nullable.t(string),
-    "_BS": Js.Nullable.t(array(string)),
-    "_BOOL": Js.Nullable.t(bool),
-    "_L": Js.Nullable.t(array(attributeValue)),
-    "_M": Js.Nullable.t(Js.Dict.t(attributeValue)),
-    "_N": Js.Nullable.t(string),
-    "_NS": Js.Nullable.t(array(string)),
-    "_NULL": Js.Nullable.t(bool),
-    "_S": Js.Nullable.t(string),
-    "_SS": Js.Nullable.t(array(string)),
+  module AttributeValue = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.as "B"] [@bs.optional]
+      b: string,
+      [@bs.as "BS"] [@bs.optional]
+      bs: array(string),
+      [@bs.as "BOOL"] [@bs.optional]
+      bool,
+      [@bs.as "L"] [@bs.optional]
+      l: array(t),
+      [@bs.as "M"] [@bs.optional]
+      m: Js.Dict.t(t),
+      [@bs.as "N"] [@bs.optional]
+      n: string,
+      [@bs.as "NS"] [@bs.optional]
+      ns: array(string),
+      [@bs.as "NULL"] [@bs.optional]
+      null: bool,
+      [@bs.as "S"] [@bs.optional]
+      s: string,
+      [@bs.as "SS"] [@bs.optional]
+      ss: array(string),
+    };
+    let make = t;
   };
-  type streamRecord = {
-    .
-    "_ApproximateCreationTime": Js.Nullable.t(int),
-    "_Keys": Js.Nullable.t(Js.Dict.t(attributeValue)),
-    "_NewImage": Js.Nullable.t(Js.Dict.t(attributeValue)),
-    "_OldImage": Js.Nullable.t(Js.Dict.t(attributeValue)),
-    "_SequenceNumber": Js.Nullable.t(string),
-    "_SizeBytes": Js.Nullable.t(int),
-    "_StreamViewType": Js.Nullable.t(string) /* 'KEYS_ONLY' | 'NEW_IMAGE' | 'OLD_IMAGE' | 'NEW_AND_OLD_IMAGES' */
+
+  module StreamRecord = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.as "ApproximateCreationTime"] [@bs.optional]
+      approximateCreationTime: int,
+      [@bs.as "Keys"] [@bs.optional]
+      keys: Js.Dict.t(AttributeValue.t),
+      [@bs.as "NewImage"] [@bs.optional]
+      newImage: Js.Dict.t(AttributeValue.t),
+      [@bs.as "OldImage"] [@bs.optional]
+      oldImage: Js.Dict.t(AttributeValue.t),
+      [@bs.as "SequenceNumber"] [@bs.optional]
+      sequenceNumber: string,
+      [@bs.as "SizeBytes"] [@bs.optional]
+      sizeBytes: int,
+      [@bs.as "StreamViewType"] [@bs.optional]
+      streamViewType: string /* 'KEYS_ONLY' | 'NEW_IMAGE' | 'OLD_IMAGE' | 'NEW_AND_OLD_IMAGES' */
+    };
+    let make = t;
   };
-  type record = {
-    .
-    "awsRegion": Js.Nullable.t(string),
-    "dynamodb": Js.Nullable.t(streamRecord),
-    "eventID": string,
-    "eventName": Js.Nullable.t(string), /* 'INSERT' | 'MODIFY' | 'REMOVE';*/
-    "eventSource": Js.Nullable.t(string),
-    "eventSourceARN": Js.Nullable.t(string),
-    "eventVersion": Js.Nullable.t(string),
-    "userIdentity": Js.Nullable.t(string),
+
+  module Record = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.optional]
+      awsRegion: string,
+      [@bs.optional]
+      dynamodb: StreamRecord.t,
+      eventID: string,
+      [@bs.optional]
+      eventName: string, /* 'INSERT' | 'MODIFY' | 'REMOVE';*/
+      [@bs.optional]
+      eventSource: string,
+      [@bs.optional]
+      eventSourceARN: string,
+      [@bs.optional]
+      eventVersion: string,
+      [@bs.optional]
+      userIdentity: string,
+    };
+    let make = t;
   };
-  type streamEvent = {. "_Records": array(record)};
-  type streamHandler = handler_error(streamEvent);
+
+  module StreamEvent = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.as "Records"]
+      records: array(Record.t),
+    };
+    let make = t;
+  };
+
+  type streamHandler = handler_error(StreamEvent.t);
 };
 
 module Scheduled = {
   type detail;
-  type event = {
-    .
-    "detail-type": string,
-    "account": string,
-    "region": string,
-    "detail": detail,
-    "source": string,
-    "time": string,
-    "id": string,
-    "resources": array(string),
+  module Event = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.as "detail-type"]
+      detailType: string,
+      account: string,
+      region: string,
+      detail,
+      source: string,
+      time: string,
+      id: string,
+      resources: array(string),
+    };
+    let make = t;
   };
-  type handler = handler_error(event);
+
+  type handler = handler_error(Event.t);
 };
