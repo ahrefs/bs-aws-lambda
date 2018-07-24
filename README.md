@@ -43,32 +43,40 @@ null or base64 encoded. Plus the returned object given to the callback
 will always have the expected fields and types.
 
 ```reason
-[@bs.send.pipe : Node.Buffer.t] external bufferToString : string = "toString";
-
-let echo: AwsLambda.APIGatewayProxy.handler =
+let handler: AwsLambda.APIGatewayProxy.handler =
   (event, _context, cb) => {
+    open AwsLambda.APIGatewayProxy;
     let parameter =
-      Js.Null.toOption(event##queryStringParameters)
-      |> Js.Option.andThen([@bs] (params => Js.Dict.get(params, "userid")));
-    switch parameter {
+      event
+      |. Event.queryStringParameters
+      |> Js.Option.andThen((. params) => Js.Dict.get(params, "userid"));
+    switch (parameter) {
     | Some(userid) => Js.log2("executing lambda for", userid)
     | None => Js.log("executing lambda for anonymous user")
     };
     let result =
-      switch (Js.Null.toOption(event##body)) {
-      | None =>
+      switch (event |. Event.body, event |. Event.isBase64Encoded) {
+      | (None, false) =>
         Js.log("error: no body available in the request");
-        AwsLambda.APIGatewayProxy.result(
+        result(
           ~body=`Plain({|{"status": "no body available in the request"}|}),
           ~statusCode=400,
-          ()
+          (),
         );
-      | Some(body) => {
-          "body": body,
-          "statusCode": 200,
-          "headers": Js.Nullable.null,
-          "isBase64Encoded": Js.Nullable.return(event##isBase64Encoded)
-        }
+      | (None, true) =>
+        Js.log("error: no body available in the request");
+        result(
+          ~body=
+            `Base64(
+              "eyJzdGF0dXMiOiAibm8gYm9keSBhdmFpbGFibGUgaW4gdGhlIHJlcXVlc3QifQ==",
+            ),
+          ~statusCode=400,
+          (),
+        );
+      | (Some(body), false) =>
+        result(~body=`Plain(body), ~statusCode=200, ())
+      | (Some(body), true) =>
+        result(~body=`Base64(body), ~statusCode=200, ())
       };
     cb(Js.null, result);
     Js.Promise.resolve();

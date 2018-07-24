@@ -21,7 +21,10 @@ let handler: AwsLambda.APIGatewayProxy.handler =
       | (None, true) =>
         Js.log("error: no body available in the request");
         result(
-          ~body=`Base64({|{"status": "no body available in the request"}|}),
+          ~body=
+            `Base64(
+              "eyJzdGF0dXMiOiAibm8gYm9keSBhdmFpbGFibGUgaW4gdGhlIHJlcXVlc3QifQ==",
+            ),
           ~statusCode=400,
           (),
         );

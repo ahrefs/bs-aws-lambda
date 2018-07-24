@@ -68,10 +68,10 @@ module Context = {
     [@bs.optional]
     clientContext: ClientContext.t,
   };
-  let make = t;
-};
 
-[@bs.send] external getRemainingTimeInMillis : Context.t => int = "";
+  let make = t;
+  [@bs.send] external getRemainingTimeInMillis : t => int = "";
+};
 
 type error = Js.Nullable.t(Js.Exn.t);
 
@@ -175,7 +175,7 @@ module APIGatewayProxy = {
     let make = t;
   };
 
-  let result = (~headers=?, ~body, ~statusCode, ()) : Result.t => {
+  let result = (~headers=?, ~body, ~statusCode, ()) => {
     let (body, isBase64Encoded) =
       switch (body) {
       | `Plain(body) => (body, false)
