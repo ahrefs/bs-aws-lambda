@@ -3,11 +3,6 @@
    http://docs.aws.amazon.com/lambda
    https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/aws-lambda/index.d.ts
  */
-/** This is the responsability of the user to cast this any to the good type. */
-type any;
-
-external any : 'a => any = "%identity";
-
 module CognitoIdentity = {
   [@bs.deriving abstract]
   type t = {
@@ -46,7 +41,7 @@ module ClientContext = {
   type t = {
     client: ClientContextClient.t,
     [@bs.optional] [@bs.as "Custom"]
-    custom: any,
+    custom: Js.Json.t,
     env: ClientContextEnv.t,
   };
   let make = t;
@@ -106,7 +101,7 @@ type handler_default('event, 'return) = handler('event, error, 'return);
  * API Gateway CustomAuthorizer AuthResponse.PolicyDocument.Statement.
  * http://docs.aws.amazon.com/apigateway/latest/developerguide/use-custom-authorizer.html#api-gateway-custom-authorizer-output
  */
-type authResponseContext = Js.Dict.t(any);
+type authResponseContext = Js.Dict.t(Js.Json.t);
 
 module APIGatewayProxy = {
   module Identity = {
@@ -160,7 +155,7 @@ module APIGatewayProxy = {
     let make = t;
   };
   /** [header: string]: boolean | number | string */
-  type headers = Js.Dict.t(any);
+  type headers = Js.Dict.t(Js.Json.t);
 
   module Result = {
     [@bs.deriving abstract]
