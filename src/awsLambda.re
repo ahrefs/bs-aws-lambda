@@ -439,3 +439,64 @@ module Scheduled = {
 
   type handler = handler_error(Event.t);
 };
+
+module Sqs = {
+  module RecordAttributes = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.as "ApproximateReceiveCount"]
+      approximateReceiveCount: string,
+      [@bs.as "SentTimestamp"]
+      sentTimestamp: string,
+      [@bs.as "SenderId"]
+      senderId: string,
+      [@bs.as "ApproximateFirstReceiveTimestamp"]
+      approximateFirstReceiveTimestamp: string,
+    };
+
+    let make = t;
+  };
+
+  module MessageAttribute = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.as "Name"]
+      name: string,
+      [@bs.as "Type"]
+      type_: string,
+      [@bs.as "Value"]
+      value: string,
+    };
+
+    let make = t;
+  };
+
+  type sqsMessageAttributes = Js.Dict.t(MessageAttribute.t);
+
+  module Record = {
+    [@bs.deriving abstract]
+    type t = {
+      messageId: string,
+      receiptHandle: string,
+      body: string,
+      attributes: RecordAttributes.t,
+      messageAttributes: sqsMessageAttributes,
+      md5OfBody: string,
+      eventSource: string,
+      eventSourceARN: string,
+      awsRegion: string,
+    };
+
+    let make = t;
+  };
+
+  module Event = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.as "Records"]
+      records: array(Record.t),
+    };
+  };
+
+  type handler = handler_error(Event.t);
+};
