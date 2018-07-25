@@ -3,7 +3,7 @@
 
 
 "@ahrefs/bs-aws-lambda@file:..":
-  version "0.4.0"
+  version "0.8.0"
 
 abbrev@1:
   version "1.1.1"
@@ -482,9 +482,9 @@ browserify-zlib@^0.2.0:
   dependencies:
     pako "~1.0.5"
 
-bs-platform@^2.2.2:
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-2.2.3.tgz#d905ae10a5f3621e6a739041dfa0b58483a2174f"
+bs-platform@^3.0.0:
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-3.1.5.tgz#fb34ee4702bc9163848d5537096c4f31ebaeed40"
 
 buffer-crc32@^0.2.1:
   version "0.2.13"
