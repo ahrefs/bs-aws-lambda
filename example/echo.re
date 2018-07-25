@@ -10,28 +10,16 @@ let handler: AwsLambda.APIGatewayProxy.handler =
     | None => Js.log("executing lambda for anonymous user")
     };
     let result =
-      switch (event |. Event.body, event |. Event.isBase64Encoded) {
-      | (None, false) =>
+      switch (event |. Event.body) {
+      | None =>
         Js.log("error: no body available in the request");
         result(
           ~body=`Plain({|{"status": "no body available in the request"}|}),
           ~statusCode=400,
           (),
         );
-      | (None, true) =>
-        Js.log("error: no body available in the request");
-        result(
-          ~body=
-            `Base64(
-              "eyJzdGF0dXMiOiAibm8gYm9keSBhdmFpbGFibGUgaW4gdGhlIHJlcXVlc3QifQ==",
-            ),
-          ~statusCode=400,
-          (),
-        );
-      | (Some(body), false) =>
-        result(~body=`Plain(body), ~statusCode=200, ())
-      | (Some(body), true) =>
-        result(~body=`Base64(body), ~statusCode=200, ())
+      | Some(body) =>
+        Result.make(~statusCode=200, ~body, ~isBase64Encoded=event |. Event.isBase64Encoded, ())
       };
     cb(Js.null, result);
     Js.Promise.resolve();
