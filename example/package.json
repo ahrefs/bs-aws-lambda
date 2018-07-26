@@ -11,5 +11,10 @@
     "serverless-offline": "^3.18.0",
     "serverless-webpack": "^4.3.0",
     "webpack": "^4.0.0"
+  },
+  "scripts": {
+    "build": "bsb -make-world",
+    "watch": "bsb -make-world -w",
+    "clean": "bsb -clean-world"
   }
 }
