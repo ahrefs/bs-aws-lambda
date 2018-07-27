@@ -495,3 +495,97 @@ module Sqs = {
 
   type handler = handler_error(Event.t);
 };
+
+module S3 = {
+  module UserIdentity = {
+    [@bs.deriving abstract]
+    type t = {principalId: string};
+
+    let make = t;
+  };
+
+  module RequestParameters = {
+    [@bs.deriving abstract]
+    type t = {sourceIPAddress: string};
+
+    let make = t;
+  };
+
+  module ResponseElements = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.as "x-amz-request-id"]
+      xAmzRequestId: string,
+      [@bs.as "x-amz-id-2"]
+      xAmzId2: string,
+    };
+
+    let make = t;
+  };
+
+  module Info = {
+    module Bucket = {
+      [@bs.deriving abstract]
+      type t = {
+        name: string,
+        ownerIdentity: UserIdentity.t,
+        arn: string,
+      };
+
+      let make = t;
+    };
+
+    module Object = {
+      [@bs.deriving abstract]
+      type t = {
+        key: string,
+        size: int,
+        eTag: string,
+        versionId: string,
+        sequencer: string,
+      };
+
+      let make = t;
+    };
+
+    [@bs.deriving abstract]
+    type t = {
+      s3SchemaVersion: string,
+      configurationId: string,
+      bucket: Bucket.t,
+      [@bs.as "object"]
+      object_: Object.t,
+    };
+
+    let make = t;
+  };
+
+  module EventRecord = {
+    [@bs.deriving abstract]
+    type t = {
+      eventVersion: string,
+      eventSource: string,
+      awsRegion: string,
+      eventTime: string,
+      eventName: string,
+      userIdentity: UserIdentity.t,
+      requestParameters: RequestParameters.t,
+      responseElements: ResponseElements.t,
+      s3: Info.t,
+    };
+
+    let make = t;
+  };
+
+  module Event = {
+    [@bs.deriving abstract]
+    type t = {
+      [@bs.as "Records"]
+      records: array(EventRecord.t),
+    };
+
+    let make = t;
+  };
+
+  type handler = handler_error(Event.t);
+};
