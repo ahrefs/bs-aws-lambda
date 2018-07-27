@@ -523,7 +523,7 @@ module S3 = {
     let make = t;
   };
 
-  module S3Info = {
+  module Info = {
     module Bucket = {
       [@bs.deriving abstract]
       type t = {
@@ -554,7 +554,7 @@ module S3 = {
       configurationId: string,
       bucket: Bucket.t,
       [@bs.as "object"]
-      _object: Object.t,
+      object_: Object.t,
     };
 
     let make = t;
@@ -571,7 +571,7 @@ module S3 = {
       userIdentity: UserIdentity.t,
       requestParameters: RequestParameters.t,
       responseElements: ResponseElements.t,
-      s3: S3Info.t,
+      s3: Info.t,
     };
 
     let make = t;
