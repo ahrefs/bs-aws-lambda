@@ -183,18 +183,14 @@ module APIGatewayProxy = {
   module Event = {
     [@bs.deriving abstract]
     type t = {
-      [@bs.optional]
-      body: string,
+      body: Js.Nullable.t(string),
       headers: Js.Dict.t(string),
       httpMethod: string,
       isBase64Encoded: bool,
       path: string,
-      [@bs.optional]
-      pathParameters: Js.Dict.t(string),
-      [@bs.optional]
-      queryStringParameters: Js.Dict.t(string),
-      [@bs.optional]
-      stageVariables: Js.Dict.t(string),
+      pathParameters: Js.Nullable.t(Js.Dict.t(string)),
+      queryStringParameters: Js.Nullable.t(Js.Dict.t(string)),
+      stageVariables: Js.Nullable.t(Js.Dict.t(string)),
       requestContext: EventRequestContext.t,
       resource: string,
     };
