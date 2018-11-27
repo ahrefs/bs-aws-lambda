@@ -90,10 +90,10 @@ type callback('error, 'return) = (Js.Null.t('error), 'return) => unit;
  * @param callback – optional callback to return information to the caller, otherwise return value is null.
  */
 type handler_error('event) =
-  ('event, Context.t, callback_error) => Js.Promise.t(unit);
+  ('event, Context.t, callback_error) => unit;
 
 type handler('event, 'error, 'return) =
-  ('event, Context.t, callback('error, 'return)) => Js.Promise.t(unit);
+  ('event, Context.t, callback('error, 'return)) => unit;
 
 type handler_default('event, 'return) = handler('event, error, 'return);
 
