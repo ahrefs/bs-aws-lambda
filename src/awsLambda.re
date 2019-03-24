@@ -68,34 +68,16 @@ module Context = {
   [@bs.send] external getRemainingTimeInMillis : t => int = "";
 };
 
-type error = Js.Nullable.t(Js.Exn.t);
-
-/**
- * Optional callback parameter.
- * http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-handler.html
- *
- * @param error – an optional parameter that you can use to provide results of the failed Lambda function execution.
- * @param result – an optional parameter that you can use to provide the result of a successful function execution. The result provided must be JSON.stringify compatible.
- */
-type callback_error = error => unit;
-
-type callback('error, 'return) = (Js.Null.t('error), 'return) => unit;
-
 /**
  * AWS Lambda handler function.
  * http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-handler.html
  *
  * @param event – event data.
  * @param context – runtime information of the Lambda function that is executing.
- * @param callback – optional callback to return information to the caller, otherwise return value is null.
  */
-type handler_error('event) =
-  ('event, Context.t, callback_error) => Js.Promise.t(unit);
+type handler_default('event, 'return) = ('event, Context.t) => Js.Promise.t('return);
 
-type handler('event, 'error, 'return) =
-  ('event, Context.t, callback('error, 'return)) => Js.Promise.t(unit);
-
-type handler_default('event, 'return) = handler('event, error, 'return);
+type handler_unit('event) = ('event, Context.t) => Js.Promise.t(unit);
 
 /**
  * API Gateway CustomAuthorizer AuthResponse.PolicyDocument.Statement.
@@ -254,7 +236,7 @@ module APIGatewayAuthorizer = {
     };
     let make = t;
   };
-  type nonrec handler = handler(Event.t, string, Js.Nullable.t(Result.t));
+  type nonrec handler = handler_default(Event.t, Js.Nullable.t(Result.t));
 };
 
 module Sns = {
@@ -324,7 +306,7 @@ module Sns = {
     let make = t;
   };
 
-  type handler = handler_error(Event.t);
+  type handler = handler_unit(Event.t);
 };
 
 module Dynamodb = {
@@ -407,7 +389,7 @@ module Dynamodb = {
     let make = t;
   };
 
-  type streamHandler = handler_error(StreamEvent.t);
+  type streamHandler = handler_unit(StreamEvent.t);
 };
 
 module Scheduled = {
@@ -428,7 +410,7 @@ module Scheduled = {
     let make = t;
   };
 
-  type handler = handler_error(Event.t);
+  type handler = handler_unit(Event.t);
 };
 
 module Sqs = {
@@ -489,7 +471,7 @@ module Sqs = {
     };
   };
 
-  type handler = handler_error(Event.t);
+  type handler = handler_unit(Event.t);
 };
 
 module S3 = {
@@ -583,5 +565,5 @@ module S3 = {
     let make = t;
   };
 
-  type handler = handler_error(Event.t);
+  type handler = handler_unit(Event.t);
 };
