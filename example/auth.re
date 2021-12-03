@@ -21,7 +21,7 @@ let generatePolicy =
   );
 
 let handle: AwsLambda.APIGatewayAuthorizer.handler =
-  (event, _context, cb) => {
+  (event, _context) => {
     open AwsLambda.APIGatewayAuthorizer;
     let token =
       event
@@ -29,8 +29,7 @@ let handle: AwsLambda.APIGatewayAuthorizer.handler =
       |> Js.Option.andThen((. params) => Js.Dict.get(params, "token"));
     switch (token) {
     | Some("secrettoken") =>
-      cb(
-        Js.null,
+      Js.Promise.resolve(
         Js.Nullable.return(
           generatePolicy(
             ~principalId="myuser",
@@ -39,10 +38,9 @@ let handle: AwsLambda.APIGatewayAuthorizer.handler =
             (),
           ),
         ),
+
       );
-      Js.Promise.resolve();
     | _ =>
-      cb(Js.Null.return("Unauthorized"), Js.Nullable.null);
-      Js.Promise.resolve();
+      Js.Promise.reject(Failure("Unauthorized"))
     };
   };
