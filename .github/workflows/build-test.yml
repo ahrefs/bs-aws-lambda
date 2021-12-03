@@ -23,3 +23,7 @@ jobs:
         run: yarn
       - run: yarn build
       - run: yarn test
+      - name: Install examples dependencies
+        run: cd examples && yarn
+      - name: Build examples
+        run : yarn build
