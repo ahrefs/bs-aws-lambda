@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: yarn
       - run: yarn build
-      - name: Install examples dependencies
-        run: cd examples && yarn
-      - name: Build examples
+      - name: Install example dependencies
+        run: cd example && yarn
+      - name: Build example
         run : yarn build
