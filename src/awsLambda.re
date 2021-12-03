@@ -65,7 +65,7 @@ module Context = {
   };
 
   let make = t;
-  [@bs.send] external getRemainingTimeInMillis : t => int = "";
+  [@bs.send] external getRemainingTimeInMillis : t => int = "getRemainingTimeInMillis";
 };
 
 /**
